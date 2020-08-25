@@ -71,10 +71,6 @@ void setup() {
   Serial.println(ustepping);
   Serial.print("* # of total ustep: ");
   Serial.println(rot_step_ustep);
-  
-
-
-
 
   Serial.println("==== Final Stepping condition ====");  
   Serial.print("HALF stepping_period - minimum stepping pulse interval [us]: ");
@@ -86,10 +82,9 @@ void setup() {
 //  
 //  
 }
-unsigned long time_res;
-unsigned long time_1;
-unsigned long time_2;
-unsigned long time_3;
+unsigned long time_1; // start pulse
+unsigned long time_2; // first pulse
+unsigned long time_3; // second pulse
 void loop() {
   // put your main code here, to run repeatedly:
 
