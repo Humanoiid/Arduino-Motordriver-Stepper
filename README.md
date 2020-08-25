@@ -17,9 +17,9 @@ Arduino-STSPIN220-Stepper
 
 ## Hardware:
 
-* Stepper Motor: 
- - model name(?): 18118-P06 cheap stepper motor
- - Link: https://ko.aliexpress.com/item/4000121927885.html?spm=a2g0s.9042311.0.0.4b014c4d8kqu3P
- - Correct pin order by test: A+ A- B+ B-
- - steps of motor by experience: 16 steps 
+1 Stepper Motor: 
+ * model name(?): 18118-P06 cheap stepper motor
+ * Link: https://ko.aliexpress.com/item/4000121927885.html?spm=a2g0s.9042311.0.0.4b014c4d8kqu3P
+ * Correct pin order by test: A+ A- B+ B-
+ * steps of motor by experience: 16 steps 
  
