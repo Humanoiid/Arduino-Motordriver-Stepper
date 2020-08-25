@@ -3,6 +3,10 @@
 
 Arduino + Stepper motor to control small Stepper motor with high angular resolution/ low speed
 
+### Caution
+* Some of codes comments are worng, as they are remnant of the things that were being modified.
+* Sources list order:  create time 
+
 
 ## Source list
 
@@ -16,6 +20,8 @@ Arduino + Stepper motor to control small Stepper motor with high angular resolut
  * Using Motor driver(STSPIN220 for microstepping with low voltage)
  * can control motor with smooth rotation
  * motor shows strong heat - it seems need to check current or power
+4. ARDUINO_STSPIN220_Stepper_manual.ino
+ * manually control the time for rotation speed control
 
 ## Hardware:
 
