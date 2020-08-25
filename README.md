@@ -1,5 +1,7 @@
 # Arduino-Motordriver-Stepper
-Arduino-STSPIN220-Stepper
+
+
+Arduino + Stepper motor to control small Stepper motor with high angular resolution/ low speed
 
 
 ## Source list
