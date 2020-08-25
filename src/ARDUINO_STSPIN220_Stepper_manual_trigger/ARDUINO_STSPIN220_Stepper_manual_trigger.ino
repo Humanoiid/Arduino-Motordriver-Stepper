@@ -28,6 +28,8 @@ int DIR = 7; // DB DIR1 (CN9 pin8) (PD7)
 
 const int STBY=8;     // STBY = Standby\reset input. When forced low the device enters in low consumption mode: all motor-coils are non-current 
 
+int inPin = 13; // read state to rotate or not
+
 // motor paramater ====================================================
 int rot_step = 16;
 int ustepping = 256; // 1, 2, 4, 8, 16, 32, 64, 128, 256
@@ -50,6 +52,7 @@ void setup() {
   pinMode(mode_3,OUTPUT); // == pinMode(STEP,OUTPUT); (
   pinMode(mode_4,OUTPUT); // == pinMode(DIR,OUTPUT);
   pinMode(STBY, OUTPUT);  
+  pinMode(inPin, INPUT_PULLUP); // pullup to set default HIGH (if connect with GND, LOW)
 
   //// STSPIN220 Motor Driver Setup
   setup_StepperMTDR(STBY, mode_1,mode_2,mode_3,mode_4);
@@ -86,31 +89,34 @@ unsigned long time_1; // start pulse
 unsigned long time_2; // first pulse
 unsigned long time_3; // second pulse
 void loop() {
-  // put your main code here, to run repeatedly:
+  // if there are input, rotate
 
-  // number of rotation
-  for(int i = 0; i<10;i++)
-  {
-    ///// 1 rotation loop
-    PORTD = B10000000; // digital pin 7 HIGH
-    for(int x = 0; x < rot_step_ustep; x++) {  // 3 rotation
-      time_1 = micros(); // t1 = when it start rotation    
-      PORTD = B10001000; // digital pin 3 HIGH
-      while(time_2 - time_1 < control_time){
-        time_2 = micros();   
-      }
-      PORTD = B10000000; // digital pin 3 LOW
-      while(time_3 - time_2 < control_time){
-        time_3 = micros();   
-      }
-    }
+  int val = digitalRead(inPin);
+  Serial.println(val);
+  if(digitalRead(inPin) == LOW){
     
+    // number of rotation
+    for(int i = 0; i<10;i++)
+    {
+      ///// 1 rotation loop
+      PORTD = B10000000; // digital pin 7 HIGH
+      for(int x = 0; x < rot_step_ustep; x++) {  // 3 rotation
+        time_1 = micros(); // t1 = when it start rotation    
+        PORTD = B10001000; // digital pin 3 HIGH
+        while(time_2 - time_1 < control_time){
+          time_2 = micros();   
+        }
+        PORTD = B10000000; // digital pin 3 LOW
+        while(time_3 - time_2 < control_time){
+          time_3 = micros();   
+        }
+      }
+      
+    }
+    // rest
+    PORTD = B00000000; // digital pin 7 LOW 
+  //  delay(2000);
   }
-  // rest
-  PORTD = B00000000; // digital pin 7 LOW 
-  delay(2000); 
-  
-
 }
 
 void setup_StepperMTDR(int STBY, int mode_1,int mode_2, int mode_3, int mode_4){
