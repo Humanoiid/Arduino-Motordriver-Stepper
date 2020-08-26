@@ -14,6 +14,9 @@
  *  
  */
 #include <Stepper.h>
+//#include <TimerOne.h> // timer to reduce audio frequency band noise
+//#include <MsTimer2.h> // timer for Acceleration/deceleration control
+#include <AccelStepper.h>
 
 int mode_1 = 5; // CN9 pin6 /Arduino 5 (PD5)
 int mode_2 = 10; // CN5 pin3 /Arduino 10 (PB2)
@@ -52,6 +55,10 @@ unsigned long timel_2; // loop2
 int val;
 int stat_stanby=0;
 
+
+// AccelStpeer
+AccelStepper stepper(AccelStepper::DRIVER, STEP, DIR);
+
 void setup() {
   // put your setup code here, to run once:
   pinMode(mode_1,OUTPUT); 
@@ -60,6 +67,8 @@ void setup() {
   pinMode(mode_4,OUTPUT); // == pinMode(DIR,OUTPUT);
   pinMode(STBY, OUTPUT);  
   pinMode(inPin, INPUT_PULLUP); // pullup to set default HIGH (if connect with GND, LOW)
+
+
 
   Serial.begin(9600);
   Serial.println("--- Serial Begin ---");
@@ -84,6 +93,16 @@ void setup() {
   Serial.println(step1_period/2);
   Serial.print("INT HALFstepping_period(control time) [us]: ");
   Serial.println(control_time);
+
+  // AccelStepper init
+
+  stepper_init();    
+  stepper.setCurrentPosition(0);  
+  stepper.setSpeed(rotation_freq * rot_step_ustep); // step/seconds..30 Hz -> rotation_freq * rot_step_ustep / 1
+//  stepper.targetPosition(rot_step_ustep);
+  stepper.moveTo(stepper.currentPosition()+rot_step_ustep);
+//  
+//  
 }
 
 void loop() {
@@ -105,6 +124,7 @@ void loop() {
     for(int i = 0; i<2;i++)
     {
 //      time_1 = micros();
+      stepper.runSpeedToPosition();
 //      ///// 1 rotation loop
 //      PORTD = B10000000; // digital pin 7 HIGH
 //      for(int x = 0; x < rot_step_ustep; x++) {  // 3 rotation
@@ -152,6 +172,11 @@ void loop() {
 //  Serial.print("times [us]: ");
 //  Serial.println(timel_2 - timel_1);
 }
+
+void stepper_init(){   
+//  stepper.setMaxSpeed(2000);   
+  stepper.setAcceleration(1500);   
+}  
 
 void setup_StepperMTDR(int STBY, int mode_1,int mode_2, int mode_3, int mode_4){
   // method of setups shows in Documnets AN4923 (Application note: STSPIN220)

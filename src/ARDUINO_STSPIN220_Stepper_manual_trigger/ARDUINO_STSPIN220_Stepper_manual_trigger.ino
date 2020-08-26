@@ -32,10 +32,10 @@ int inPin = 13; // read state to rotate or not
 
 // motor paramater ====================================================
 int rot_step = 16;
-int ustepping = 256; // 1, 2, 4, 8, 16, 32, 64, 128, 256
+int ustepping = 2; // 1, 2, 4, 8, 16, 32, 64, 128, 256
 double rot_step_ustep = rot_step * ustepping;
 
-double rotation_freq = 30; //motor rotation speed [Hz]
+double rotation_freq = 0.2; //motor rotation speed [Hz]
 double rotation_period = 1000000/rotation_freq; //[us]
 float rotation_period_ms = float(rotation_period)/1000; // [ms]
 
@@ -44,6 +44,15 @@ double SteppingPRP = 4 * step1_period;  //[us]
 double SteppingPRF = 1000000/SteppingPRP; //[Hz] 
 
 int control_time = int(step1_period/2); // [us]
+
+// parameter for variable control
+unsigned long time_1; // start pulse
+unsigned long time_2; // first pulse
+unsigned long time_3; // second pulse
+
+unsigned long timel_1; // loop1
+unsigned long timel_2; // loop2
+int val;
 
 void setup() {
   // put your setup code here, to run once:
@@ -85,38 +94,54 @@ void setup() {
 //  
 //  
 }
-unsigned long time_1; // start pulse
-unsigned long time_2; // first pulse
-unsigned long time_3; // second pulse
+
 void loop() {
   // if there are input, rotate
-
-  int val = digitalRead(inPin);
-  Serial.println(val);
+//  timel_1 = micros();
+  val = digitalRead(inPin);
+//  Serial.println(val);
+  
   if(digitalRead(inPin) == LOW){
     
     // number of rotation
-    for(int i = 0; i<10;i++)
+    for(int i = 0; i<2;i++)
     {
       ///// 1 rotation loop
       PORTD = B10000000; // digital pin 7 HIGH
       for(int x = 0; x < rot_step_ustep; x++) {  // 3 rotation
-        time_1 = micros(); // t1 = when it start rotation    
+        time_1 = micros(); // t1 = when it start rotation 
+//        Serial.print("times 1 [us]: ");
+//        Serial.print(time_1);   
         PORTD = B10001000; // digital pin 3 HIGH
+        time_2 = time_1;
+        
         while(time_2 - time_1 < control_time){
-          time_2 = micros();   
+          time_2 = micros(); 
         }
+//        Serial.print("/ times 2 [us]: ");
+//        Serial.print(time_2);  
+        time_3 = time_2;
         PORTD = B10000000; // digital pin 3 LOW
         while(time_3 - time_2 < control_time){
           time_3 = micros();   
+//          Serial.print("/ times 3 [us]: ");
+//          Serial.println(time_3);   
         }
+        
       }
-      
+      Serial.print("times [us]: ");
+      Serial.print(time_2 - time_1);
+      Serial.print("/");
+      Serial.println(time_3 - time_2);
     }
     // rest
     PORTD = B00000000; // digital pin 7 LOW 
-  //  delay(2000);
+    delay(2000);
   }
+//  timel_2 = micros();
+
+//  Serial.print("times [us]: ");
+//  Serial.println(timel_2 - timel_1);
 }
 
 void setup_StepperMTDR(int STBY, int mode_1,int mode_2, int mode_3, int mode_4){
@@ -125,8 +150,12 @@ void setup_StepperMTDR(int STBY, int mode_1,int mode_2, int mode_3, int mode_4){
   delayMicroseconds(2); // at least 1us
   
 
-  digitalWrite(mode_1,LOW); //
-  digitalWrite(mode_2,HIGH); //
+//  digitalWrite(mode_1,LOW); //
+//  digitalWrite(mode_2,HIGH); //
+//  digitalWrite(mode_3,HIGH); //
+//  digitalWrite(mode_4,LOW); //
+  digitalWrite(mode_1,HIGH); //
+  digitalWrite(mode_2,LOW); //
   digitalWrite(mode_3,HIGH); //
   digitalWrite(mode_4,LOW); //
 
