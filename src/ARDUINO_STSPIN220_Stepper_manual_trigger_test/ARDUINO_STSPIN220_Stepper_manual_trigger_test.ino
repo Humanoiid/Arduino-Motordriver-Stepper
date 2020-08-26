@@ -5,7 +5,7 @@
  *  3. time control: http://rokitarduino.org/2014/05/23/input%EA%B3%BC-input_pullup%EC%9D%98-%EC%B0%A8%EC%9D%B4/
  *  4. register GPIO: http://blog.naver.com/PostView.nhn?blogId=twophase&logNo=221004945877
  *  5. register, gpio, pin informations: https://opentutorials.org/module/1837/10642
- *  
+ *  6. AccelStepper Lib: https://makernambo.com/66
  *  
  *  * micro() function takes around 4 microseconds. 
  *  as I need to control GPIO control around 4 microseconds, use GPIO register & minimum micro() to control time
@@ -14,9 +14,9 @@
  *  
  */
 #include <Stepper.h>
-#include <TimerOne.h> // timer to reduce audio frequency band noise
-#include <MsTimer2.h> // timer for Acceleration/deceleration control
-
+//#include <TimerOne.h> // timer to reduce audio frequency band noise
+//#include <MsTimer2.h> // timer for Acceleration/deceleration control
+//#include <AccelStepper.h> // accelation control
 
 int mode_1 = 5; // CN9 pin6 /Arduino 5 (PD5)
 int mode_2 = 10; // CN5 pin3 /Arduino 10 (PB2)
@@ -32,10 +32,10 @@ int inPin = 13; // read state to rotate or not
 
 // motor paramater ====================================================
 int rot_step = 16;
-int ustepping = 64; // 1, 2, 4, 8, 16, 32, 64, 128, 256
+int ustepping = 256; // 1, 2, 4, 8, 16, 32, 64, 128, 256
 double rot_step_ustep = rot_step * ustepping;
 
-double rotation_freq = 0.2; //motor rotation speed [Hz]
+double rotation_freq = 1; //motor rotation speed [Hz]
 double rotation_period = 1000000/rotation_freq; //[us]
 float rotation_period_ms = float(rotation_period)/1000; // [ms]
 
@@ -55,6 +55,9 @@ unsigned long timel_2; // loop2
 int val;
 int stat_stanby=0;
 
+// function
+void setup_StepperMTDR(int STBY, int mode_1,int mode_2, int mode_3, int mode_4);
+
 void setup() {
   // put your setup code here, to run once:
   pinMode(mode_1,OUTPUT); 
@@ -64,7 +67,8 @@ void setup() {
   pinMode(STBY, OUTPUT);  
   pinMode(inPin, INPUT_PULLUP); // pullup to set default HIGH (if connect with GND, LOW)
 
-
+  //// STSPIN220 Motor Driver Setup
+  setup_StepperMTDR(STBY, mode_1,mode_2,mode_3,mode_4);
 
   Serial.begin(9600);
   Serial.println("--- Serial Begin ---");
@@ -89,10 +93,6 @@ void setup() {
   Serial.println(step1_period/2);
   Serial.print("INT HALFstepping_period(control time) [us]: ");
   Serial.println(control_time);
-
-
-//  
-//  
 }
 
 void loop() {
@@ -102,11 +102,12 @@ void loop() {
 //  Serial.println(val);
   
   if(digitalRead(inPin) == LOW){
-    
+
     //// STSPIN220 Motor Driver Setup
     if(stat_stanby == 0){      
     setup_StepperMTDR(STBY, mode_1,mode_2,mode_3,mode_4);
     stat_stanby = 1;
+    Serial.println("On");
     }
     
     // number of rotation
@@ -132,21 +133,23 @@ void loop() {
           time_3 = micros();   
 //          Serial.print("/ times 3 [us]: ");
 //          Serial.println(time_3);   
-        }
-        
+        } 
       }
-      Serial.print("times [us]: ");
-      Serial.print(time_2 - time_1);
-      Serial.print("/");
-      Serial.println(time_3 - time_2);
+//      Serial.print("times [us]: ");
+//      Serial.print(time_2 - time_1);
+//      Serial.print("/");
+//      Serial.println(time_3 - time_2);
     }
     // rest
     PORTD = B00000000; // digital pin 7 LOW 
 //    delay(2000);
   }
   else{
-    digitalWrite(STBY,LOW);
-    stat_stanby = 0;
+    if(stat_stanby == 1){
+      digitalWrite(STBY,LOW);
+      stat_stanby = 0;
+      Serial.println("OFF");
+    }
   }
 //  timel_2 = micros();
 
