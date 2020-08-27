@@ -23,6 +23,10 @@ Arduino + Stepper motor to control small Stepper motor with high angular resolut
  * motor shows strong heat - it seems need to check current or power
 4. ARDUINO_STSPIN220_Stepper_manual.ino
  * manually control the time for rotation speed control
+5. *_Trigger.ino
+ * use 1 DIO pin for trigger
+6. *_AccelStepper.ino
+ * external library. not well implemented
 
 
 ## Hardware:
