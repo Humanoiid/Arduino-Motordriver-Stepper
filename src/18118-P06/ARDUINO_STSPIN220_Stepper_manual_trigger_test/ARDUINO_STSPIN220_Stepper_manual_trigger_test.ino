@@ -35,7 +35,7 @@ int rot_step = 16;
 int ustepping = 256; // 1, 2, 4, 8, 16, 32, 64, 128, 256
 double rot_step_ustep = rot_step * ustepping;
 
-double rotation_freq = 100; //motor rotation speed [Hz]
+double rotation_freq = 20; //motor rotation speed [Hz]
 double rotation_period = 1000000/rotation_freq; //[us]
 double rotation_period_ms = double(rotation_period)/1000; // [ms]
 
@@ -55,7 +55,7 @@ unsigned long timel_1; // loop1
 unsigned long timel_2; // loop2
 int val;
 int stat_stanby=0;
-
+int steps;
 // function
 void setup_StepperMTDR(int STBY, int mode_1,int mode_2, int mode_3, int mode_4);
 
@@ -116,9 +116,10 @@ void loop() {
     // number of rotation
     for(int i = 0; i<1;i++)
     {
-//      timel_1 = micros();
+      timel_1 = micros();
       ///// 1 rotation loop
       PORTD = B10000000; // digital pin 7 HIGH
+//      time_temp = micros();
       for(int x = 0; x < rot_step_ustep; x++) {  // 3 rotation
         time_1 = micros(); // t1 = when it start rotation 
         time_2 = time_1;
@@ -131,16 +132,33 @@ void loop() {
         while(time_3 - time_2 < control_time){
           time_3 = micros();   
         } 
+//        analogWrite(STEP,255);
+//        analogWrite(STEP,0);
+//        digitalWrite(STEP,HIGH);
+//        digitalWrite(STEP,LOW);
+//          PORTD = B10001000; // digital pin 3 HIGH
+//          PORTD = B10000000; // digital pin 3 LOW
+//          PORTD = B10001000; // digital pin 3 HIGH
+//          PORTD = B10000000; // digital pin 3 LOW
       }
       timel_2 = micros();
       Serial.print("1 rotate [us]: ");
       Serial.print(timel_2 - timel_1); 
       Serial.print("/ Rotation speed [Hz]: ");
       Serial.println(1000000/double(timel_2 - timel_1)); 
-
+ 
 //      Serial.print("1 insert [us]: ");
-//      Serial.println(time_1 - time_temp); 
+//      Serial.println(timel_1 - time_temp); 
+//      steps = 0;
+//      while(steps++ != rot_step_ustep)
+//      {
+//        PORTD = B10001000; // digital pin 3 HIGH
+//        PORTD = B10000000; // digital pin 3 LOW
+//        fast_toggle();
+//      }
     }
+
+    
     // rest
     PORTD = B00000000; // digital pin 7 LOW 
 //    delay(2000);
@@ -182,4 +200,8 @@ void setup_StepperMTDR(int STBY, int mode_1,int mode_2, int mode_3, int mode_4){
 //  digitalWrite(mode_4,LOW); //
 }
 
+void fast_toggle(){
+  PORTD = B10001000; // digital pin 3 HIGH
+  PORTD = B10000000; // digital pin 3 LOW
+}
   
