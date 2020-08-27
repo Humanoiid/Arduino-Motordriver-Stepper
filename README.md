@@ -8,7 +8,8 @@ Arduino + Stepper motor to control small Stepper motor with high angular resolut
 * Sources list order:  create time 
 
 
-## Source list
+## Source list 
+(different folder by motor)
 
 1. ARDUINO_STEPPER_Direct.ino
  * Directly control Stepper motor by Arduino
@@ -23,9 +24,10 @@ Arduino + Stepper motor to control small Stepper motor with high angular resolut
 4. ARDUINO_STSPIN220_Stepper_manual.ino
  * manually control the time for rotation speed control
 
+
 ## Hardware:
 
-1 Stepper Motor: 
+1. Stepper Motor: 
  * model name(?): 18118-P06 cheap stepper motor
  * Link: https://ko.aliexpress.com/item/4000121927885.html?spm=a2g0s.9042311.0.0.4b014c4d8kqu3P
  * Correct pin order by test: A+ A- B+ B-
