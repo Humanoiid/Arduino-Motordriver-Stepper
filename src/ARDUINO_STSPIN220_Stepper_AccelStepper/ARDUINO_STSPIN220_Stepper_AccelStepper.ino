@@ -40,8 +40,6 @@ double rotation_period = 1000000/rotation_freq; //[us]
 float rotation_period_ms = float(rotation_period)/1000; // [ms]
 
 double step1_period = rotation_period/rot_step_ustep; //[us]
-//double SteppingPRP = 4 * step1_period;  //[us]
-//double SteppingPRF = 1000000/SteppingPRP; //[Hz] 
 
 long control_time = long(step1_period/2); // [us]
 
@@ -98,11 +96,9 @@ void setup() {
 
   stepper_init();    
   stepper.setCurrentPosition(0);  
-  stepper.setSpeed(rotation_freq * rot_step_ustep); // step/seconds..30 Hz -> rotation_freq * rot_step_ustep / 1
+//  stepper.setSpeed(rotation_freq * rot_step_ustep); // step/seconds..30 Hz -> rotation_freq * rot_step_ustep / 1
+  stepper.setSpeed(rotation_freq * rot_step); // step/seconds..30 Hz -> rotation_freq * rot_step_ustep / 1
 //  stepper.targetPosition(rot_step_ustep);
-  stepper.moveTo(stepper.currentPosition()+rot_step_ustep);
-//  
-//  
 }
 
 void loop() {
@@ -123,38 +119,16 @@ void loop() {
     // number of rotation
     for(int i = 0; i<2;i++)
     {
-//      time_1 = micros();
-      stepper.runSpeedToPosition();
-//      ///// 1 rotation loop
-//      PORTD = B10000000; // digital pin 7 HIGH
-//      for(int x = 0; x < rot_step_ustep; x++) {  // 3 rotation
-//        time_1 = micros(); // t1 = when it start rotation 
-////        Serial.print("times 1 [us]: ");
-////        Serial.print(time_1);   
-//        PORTD = B10001000; // digital pin 3 HIGH
-//        time_2 = time_1;
-//        
-//        while(time_2 - time_1 < control_time){
-//          time_2 = micros(); 
-//        }
-////        Serial.print("/ times 2 [us]: ");
-////        Serial.print(time_2);  
-//        time_3 = time_2;
-//        PORTD = B10000000; // digital pin 3 LOW
-//        while(time_3 - time_2 < control_time){
-//          time_3 = micros();   
-////          Serial.print("/ times 3 [us]: ");
-////          Serial.println(time_3);   
-//        }
-//        
-//      }
-//      Serial.print("times [us]: ");
-//      Serial.print(time_2 - time_1);
-//      Serial.print("/");
-//      Serial.println(time_3 - time_2);
-//      time_2 = micros();
-//      Serial.print("times [us]: ");
-//      Serial.println(time_2 - time_1);
+
+      time_1 = micros();
+      stepper.moveTo(stepper.currentPosition()+rot_step_ustep);
+      while (stepper.currentPosition()  != stepper.targetPosition()){
+        stepper.runSpeedToPosition();  
+      }
+      time_2 = micros();
+        Serial.print("times [us]: ");
+        Serial.println(time_2 - time_1);
+
     }
     // rest
 //    PORTD = B00000000; // digital pin 7 LOW 
