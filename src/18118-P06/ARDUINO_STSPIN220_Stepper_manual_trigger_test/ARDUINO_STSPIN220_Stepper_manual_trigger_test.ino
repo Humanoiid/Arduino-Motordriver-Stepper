@@ -32,10 +32,10 @@ int inPin = 13; // read state to rotate or not
 
 // motor paramater ====================================================
 int rot_step = 16;
-int ustepping = 256; // 1, 2, 4, 8, 16, 32, 64, 128, 256
+int ustepping = 4; // 1, 2, 4, 8, 16, 32, 64, 128, 256
 double rot_step_ustep = rot_step * ustepping;
 
-double rotation_freq = 20; //motor rotation speed [Hz]
+double rotation_freq = 1; //motor rotation speed [Hz]
 double rotation_period = 1000000/rotation_freq; //[us]
 double rotation_period_ms = double(rotation_period)/1000; // [ms]
 
@@ -70,6 +70,8 @@ void setup() {
 
   //// STSPIN220 Motor Driver Setup
   setup_StepperMTDR(STBY, mode_1,mode_2,mode_3,mode_4);
+  digitalWrite(STBY,LOW);
+  stat_stanby = 0;
 
   Serial.begin(9600);
   Serial.println("------------------ Serial Begin ------------------");
@@ -140,6 +142,9 @@ void loop() {
 //          PORTD = B10000000; // digital pin 3 LOW
 //          PORTD = B10001000; // digital pin 3 HIGH
 //          PORTD = B10000000; // digital pin 3 LOW
+        delay(10000/rot_step_ustep);
+        Serial.print("steps: ");
+        Serial.println(x);
       }
       timel_2 = micros();
       Serial.print("1 rotate [us]: ");
@@ -182,14 +187,15 @@ void setup_StepperMTDR(int STBY, int mode_1,int mode_2, int mode_3, int mode_4){
   delayMicroseconds(2); // at least 1us
   
 
-  digitalWrite(mode_1,LOW); //
-  digitalWrite(mode_2,HIGH); //
-  digitalWrite(mode_3,HIGH); //
-  digitalWrite(mode_4,LOW); //
 //  digitalWrite(mode_1,LOW); //
 //  digitalWrite(mode_2,HIGH); //
-//  digitalWrite(mode_3,LOW); //
-//  digitalWrite(mode_4,HIGH); //
+//  digitalWrite(mode_3,HIGH); //
+//  digitalWrite(mode_4,LOW); //
+  
+  digitalWrite(mode_1,LOW); //
+  digitalWrite(mode_2,HIGH); //
+  digitalWrite(mode_3,LOW); //
+  digitalWrite(mode_4,HIGH); //
 
   digitalWrite(STBY,HIGH);
   delayMicroseconds(120); // at least 100us
