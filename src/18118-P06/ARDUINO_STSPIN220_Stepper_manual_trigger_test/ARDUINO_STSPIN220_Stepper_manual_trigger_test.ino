@@ -18,6 +18,15 @@
 //#include <MsTimer2.h> // timer for Acceleration/deceleration control
 //#include <AccelStepper.h> // accelation control
 
+#define B0 B00000001
+#define B1 B00000010
+#define B2 B00000100
+#define B3 B00001000
+#define B4 B00010000
+#define B5 B00100000
+#define B6 B01000000
+#define B7 B10000000
+
 int mode_1 = 5; // CN9 pin6 /Arduino 5 (PD5)
 int mode_2 = 10; // CN5 pin3 /Arduino 10 (PB2)
 int mode_3 = 3; // CN9 pin4 /Arduino 3 (= STCK)
@@ -120,17 +129,20 @@ void loop() {
     {
       timel_1 = micros();
       ///// 1 rotation loop
-      PORTD = B10000000; // digital pin 7 HIGH
+//      PORTD = B10000000; // digital pin 7 HIGH
+      PORTD |= B7;
 //      time_temp = micros();
       for(int x = 0; x < rot_step_ustep; x++) {  // 3 rotation
         time_1 = micros(); // t1 = when it start rotation 
         time_2 = time_1;
-        PORTD = B10001000; // digital pin 3 HIGH
+//        PORTD = B10001000; // digital pin 3 HIGH
+        PORTD |= B3;
         while(time_2 - time_1 < control_time){
           time_2 = micros(); 
         } 
         time_3 = time_2;
-        PORTD = B10000000; // digital pin 3 LOW
+//        PORTD = B10000000; // digital pin 3 LOW
+        PORTD &= ~(B3);
         while(time_3 - time_2 < control_time){
           time_3 = micros();   
         } 
@@ -185,17 +197,66 @@ void setup_StepperMTDR(int STBY, int mode_1,int mode_2, int mode_3, int mode_4){
   // method of setups shows in Documnets AN4923 (Application note: STSPIN220)
   digitalWrite(STBY,LOW); 
   delayMicroseconds(2); // at least 1us
-  
 
-//  digitalWrite(mode_1,LOW); //
-//  digitalWrite(mode_2,HIGH); //
-//  digitalWrite(mode_3,HIGH); //
-//  digitalWrite(mode_4,LOW); //
-  
-  digitalWrite(mode_1,LOW); //
-  digitalWrite(mode_2,HIGH); //
-  digitalWrite(mode_3,LOW); //
-  digitalWrite(mode_4,HIGH); //
+
+  switch(ustepping){
+    case 1:
+      digitalWrite(mode_1,LOW); //
+      digitalWrite(mode_2,LOW); //
+      digitalWrite(mode_3,LOW); //
+      digitalWrite(mode_4,LOW); //
+      break;
+    case 2:
+      digitalWrite(mode_1,HIGH); //
+      digitalWrite(mode_2,LOW); //
+      digitalWrite(mode_3,HIGH); //
+      digitalWrite(mode_4,LOW); //
+      break;
+    case 4:
+      digitalWrite(mode_1,LOW); //
+      digitalWrite(mode_2,HIGH); //
+      digitalWrite(mode_3,LOW); //
+      digitalWrite(mode_4,HIGH); //
+      break;
+    case 8:
+      digitalWrite(mode_1,HIGH); //
+      digitalWrite(mode_2,LOW); //
+      digitalWrite(mode_3,HIGH); //
+      digitalWrite(mode_4,HIGH); //    
+      break;
+    case 16:
+      digitalWrite(mode_1,HIGH); //
+      digitalWrite(mode_2,HIGH); //
+      digitalWrite(mode_3,HIGH); //
+      digitalWrite(mode_4,HIGH); //
+      break;
+    case 32:
+      digitalWrite(mode_1,LOW); //
+      digitalWrite(mode_2,HIGH); //
+      digitalWrite(mode_3,LOW); //
+      digitalWrite(mode_4,LOW); //
+      break;
+    case 64: 
+      digitalWrite(mode_1,LOW); //
+      digitalWrite(mode_2,HIGH); //
+      digitalWrite(mode_3,HIGH); //
+      digitalWrite(mode_4,HIGH); //
+      break;
+    case 128:
+      digitalWrite(mode_1,HIGH); //
+      digitalWrite(mode_2,LOW); //
+      digitalWrite(mode_3,LOW); //
+      digitalWrite(mode_4,LOW); //
+      break;
+    case 256:
+      digitalWrite(mode_1,LOW); //
+      digitalWrite(mode_2,HIGH); //
+      digitalWrite(mode_3,HIGH); //
+      digitalWrite(mode_4,LOW); //
+      break;
+    default: 
+      Serial.println("microstepping mode set failed.");
+  }
 
   digitalWrite(STBY,HIGH);
   delayMicroseconds(120); // at least 100us
