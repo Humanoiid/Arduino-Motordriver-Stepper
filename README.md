@@ -35,6 +35,7 @@ Arduino + Stepper motor to control small Stepper motor with high angular resolut
         - Link: [https://ko.aliexpress.com/item/4000121927885.html?spm=a2g0s.9042311.0.0.4b014c4d8kqu3P](https://ko.aliexpress.com/item/4000121927885.html?spm=a2g0s.9042311.0.0.4b014c4d8kqu3P)
         - Correct pin order by test: A+ A- B+ B-
         - steps of motor by experience: 16 steps
-    2. - motor
-        - Link: -
-        - steps of motor by experience: 40 steps
+    2. SMS6-F40 PM Stepper motor
+        - Link: [https://www.eminebea.com/en/product/rotary/steppingmotor/pm/small/sms6-f40.shtml](https://www.eminebea.com/en/product/rotary/steppingmotor/pm/small/sms6-f40.shtml)
+        - steps of motor : 40 steps
+        - Correct pin order by test: [A+, A-; B-, B+] when shaft is upside.
