@@ -31,11 +31,12 @@ const int STBY=8;     // STBY = Standby\reset input. When forced low the device 
 int inPin = 13; // read state to rotate or not
 
 // motor paramater ====================================================
-int rot_step = 16;
+//int rot_step = 16;
+int rot_step = 40;
 int ustepping = 256; // 1, 2, 4, 8, 16, 32, 64, 128, 256
 double rot_step_ustep = rot_step * ustepping;
 
-double rotation_freq = 1; //motor rotation speed [Hz]
+double rotation_freq = 40; //motor rotation speed [Hz]
 double rotation_period = 1000000/rotation_freq; //[us]
 float rotation_period_ms = float(rotation_period)/1000; // [ms]
 
